@@ -11,9 +11,15 @@ def print_progress(current, total, width=40):
     percent = (current / total) * 100
     print(f"\r[{bar}] {current}/{total} ({percent:5.1f}%)", end="", flush=True)
 
-def get_player_name(player_num):
+def get_player_info(player_num):
     response = requests.get(f"https://api-web.nhle.com/v1/player/{player_num}/landing")
-    return response.json()['firstName']['default'] + " " + response.json()['lastName']['default']
+    if response.status_code == 200:
+        player_data = {}
+        player_data["name"] = response.json()['firstName']['default'] + " " + response.json()['lastName']['default']
+        player_data["team"] = response.json().get('fullTeamName', {}).get('default', 'No Team')
+        return player_data
+    else:
+        return {}
 
 if __name__ == "__main__":
     player_elos_dir = Path(__file__).resolve().parent.parent / "player_elos"
@@ -28,8 +34,10 @@ if __name__ == "__main__":
             player_id = player_data.get("player_id")
             if player_id is None:
                 continue
-
-            player_data["player_name"] = get_player_name(player_id)
+            
+            player_info = get_player_info(player_id)
+            player_data["player_name"] = player_info["name"]
+            player_data["player_team"] = player_info["team"]
 
             with player_file.open("w", encoding="utf-8") as f:
                 json.dump(player_data, f, indent=4)

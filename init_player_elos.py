@@ -6,6 +6,7 @@ Creates a JSON file per player with starting ELO of 1500 and zeroed stats.
 import json
 import os
 from pathlib import Path
+from data_scraping import player_info
 
 
 def get_all_unique_players(faceoff_dir: str = "faceoff_data") -> set:
@@ -46,13 +47,17 @@ def create_player_elo_files(output_dir: str = "player_elos"):
     
     # Create a JSON file for each player
     for player_id in sorted(all_players):
+        player_info_dict = player_info.get_player_info(player_id)
         player_data = {
             "player_id": player_id,
+            "player_name": player_info_dict.get("name", "Unknown Player"),
+            "player_team": player_info_dict.get("team", "Unknown Team"),
             "elo": 1500,
             "faceoffs_taken": 0,
             "offensive_faceoffs": 0,
             "defensive_faceoffs": 0,
             "neutral_faceoffs": 0
+            
         }
         
         filepath = output_path / f"{player_id}.json"
