@@ -1,0 +1,18 @@
+FULL DATASET BENCHMARK
+Train on ALL, Test on ALL (overfit benchmark)
+==================================================
+
+K-Value: 32
+Total games: 2949
+Total faceoffs trained: 141487
+Total faceoffs evaluated: 141487
+Total players: 901
+
+LOG LOSS: 0.701250
+Random baseline: 0.693147
+Beat random: NO
+
+NOTE: This is an overfit benchmark. The model saw all the
+data it's being tested on, so log loss SHOULD be lower
+than the 80/20 split. If it's not much lower, that means
+faceoffs are inherently very noisy/random events.

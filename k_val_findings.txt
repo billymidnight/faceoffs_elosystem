@@ -1,0 +1,130 @@
+K-VALUE OPTIMIZATION RESULTS
+NHL Faceoff ELO System
+80/20 Train/Validation Split
+
+==================================================
+K = 5
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.682875
+Better than random (0.693): YES
+
+==================================================
+K = 10
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.686533
+Better than random (0.693): YES
+
+==================================================
+K = 15
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.691293
+Better than random (0.693): YES
+
+==================================================
+K = 20
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.696446
+Better than random (0.693): NO
+
+==================================================
+K = 25
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.701806
+Better than random (0.693): NO
+
+==================================================
+K = 30
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.707296
+Better than random (0.693): NO
+
+==================================================
+K = 35
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.712865
+Better than random (0.693): NO
+
+==================================================
+K = 40
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.718475
+Better than random (0.693): NO
+
+==================================================
+K = 45
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.724102
+Better than random (0.693): NO
+
+==================================================
+K = 50
+==================================================
+Training games: 2359
+Validation games: 590
+Training faceoffs: 132326
+Validation faceoffs evaluated: 9149
+Validation faceoffs skipped: 12
+LOG LOSS: 0.729728
+Better than random (0.693): NO
+
+
+==================================================
+FINAL SUMMARY
+==================================================
+K= 5 | Log Loss: 0.682875 | Beat Random: YES <-- BEST
+K=10 | Log Loss: 0.686533 | Beat Random: YES
+K=15 | Log Loss: 0.691293 | Beat Random: YES
+K=20 | Log Loss: 0.696446 | Beat Random: NO
+K=25 | Log Loss: 0.701806 | Beat Random: NO
+K=30 | Log Loss: 0.707296 | Beat Random: NO
+K=35 | Log Loss: 0.712865 | Beat Random: NO
+K=40 | Log Loss: 0.718475 | Beat Random: NO
+K=45 | Log Loss: 0.724102 | Beat Random: NO
+K=50 | Log Loss: 0.729728 | Beat Random: NO
+
+Best K: 5 (Log Loss: 0.682875)
