@@ -8,6 +8,7 @@ import json
 import math
 from pathlib import Path
 from functools import lru_cache
+from copy import deepcopy
 
 
 def calculate_expected_score(rating_a: float, rating_b: float) -> float:
@@ -49,10 +50,44 @@ def _get_games_and_total_faceoffs(faceoff_dir: str) -> tuple[tuple[Path, ...], i
     return all_games, total_faceoffs_all
 
 
+@lru_cache(maxsize=None)
+def _load_initial_players(initial_elo_dir: str) -> dict[int, dict]:
+    """Load initial player JSONs from a directory (cached)."""
+    elo_path = Path(initial_elo_dir)
+    if not elo_path.exists() or not elo_path.is_dir():
+        return {}
+
+    players: dict[int, dict] = {}
+    for elo_file in elo_path.glob("*.json"):
+        try:
+            with open(elo_file, 'r') as f:
+                player = json.load(f)
+        except Exception:
+            # Skip unreadable/bad JSON files
+            continue
+
+        player_id = player.get("player_id")
+        if player_id is None:
+            continue
+
+        # Ensure required keys exist (keep any extra metadata like name/team)
+        player.setdefault("elo", 1500)
+        player.setdefault("faceoffs_taken", 0)
+        player.setdefault("offensive_faceoffs", 0)
+        player.setdefault("defensive_faceoffs", 0)
+        player.setdefault("neutral_faceoffs", 0)
+
+        players[player_id] = player
+
+    return players
+
+
 def run_k_optimization(
     k_value: int,
     faceoff_dir: str = "faceoff_data",
     findings_file: str | Path = "k_val_findings.txt",
+    initial_elo_dir: str | Path = "player_elos",
+    min_faceoffs_per_minute: float | None = None,
 ):
     """
     Run ELO training and validation for a specific K value.
@@ -76,20 +111,30 @@ def run_k_optimization(
     print(f"Training faceoffs target (80%): {train_faceoffs_target}")
     print(f"Validation faceoffs target (20%): {val_faceoffs_target}")
     
-    # Initialize all players with default ELO
-    players = {}  # player_id -> {elo, faceoffs_taken, offensive, defensive, neutral}
+    # Initialize players from disk (starting state)
+    # Note: deep-copied per run so each K starts from the same baseline.
+    players = deepcopy(_load_initial_players(str(initial_elo_dir)))
     
     def get_or_create_player(player_id):
         if player_id not in players:
             players[player_id] = {
                 "player_id": player_id,
+                "player_name": "Unknown Player",
+                "player_team": "Unknown Team",
                 "elo": 1500,
                 "faceoffs_taken": 0,
                 "offensive_faceoffs": 0,
                 "defensive_faceoffs": 0,
-                "neutral_faceoffs": 0
+                "neutral_faceoffs": 0,
+                "time_on_ice_seconds": 0,
             }
         return players[player_id]
+
+    def faceoffs_per_minute(player: dict) -> float:
+        toi_seconds = player.get("time_on_ice_seconds", 0) or 0
+        if toi_seconds <= 0:
+            return 0.0
+        return player.get("faceoffs_taken", 0) / (toi_seconds / 60)
     
     # ==================== TRAINING + VALIDATION (FACEOFF-BASED SPLIT) ====================
     print(f"\nTraining with K={k_value}...")
@@ -107,6 +152,7 @@ def run_k_optimization(
     valid_predictions = 0
     skipped_faceoffs = 0
     skipped_low_faceoffs = 0
+    skipped_low_faceoffs_per_minute = 0
     new_players_in_validation = 0
 
     training_complete = False
@@ -201,9 +247,19 @@ def run_k_optimization(
                 predicted_prob = calculate_expected_score(winner['elo'], loser['elo'])
 
                 if winner_taken > 50 and loser_taken > 50:
-                    loss = log_loss_single(predicted_prob, 1)
-                    total_log_loss += loss
-                    valid_predictions += 1
+                    if min_faceoffs_per_minute is not None:
+                        winner_fpm = faceoffs_per_minute(winner)
+                        loser_fpm = faceoffs_per_minute(loser)
+                        if winner_fpm < min_faceoffs_per_minute or loser_fpm < min_faceoffs_per_minute:
+                            skipped_low_faceoffs_per_minute += 1
+                        else:
+                            loss = log_loss_single(predicted_prob, 1)
+                            total_log_loss += loss
+                            valid_predictions += 1
+                    else:
+                        loss = log_loss_single(predicted_prob, 1)
+                        total_log_loss += loss
+                        valid_predictions += 1
                 else:
                     skipped_low_faceoffs += 1
 
@@ -253,6 +309,11 @@ def run_k_optimization(
     print(f"  New players introduced during validation: {new_players_in_validation}")
     print(f"  Skipped (unknown players): {skipped_faceoffs}")
     print(f"  Skipped (<= 50 total faceoffs for either player): {skipped_low_faceoffs}")
+    if min_faceoffs_per_minute is not None:
+        print(
+            f"  Skipped (faceoffs/min < {min_faceoffs_per_minute} for either player): "
+            f"{skipped_low_faceoffs_per_minute}"
+        )
     print(f"  Average Log Loss: {avg_log_loss:.6f}")
     print(f"  (Random baseline = 0.693)")
     
@@ -275,6 +336,7 @@ def run_k_optimization(
         "val_faceoffs_evaluated": valid_predictions,
         "val_faceoffs_skipped": skipped_faceoffs,
         "val_faceoffs_skipped_low_faceoffs": skipped_low_faceoffs,
+        "val_faceoffs_skipped_low_faceoffs_per_minute": skipped_low_faceoffs_per_minute,
         "val_new_players": new_players_in_validation,
         "log_loss": avg_log_loss,
         "better_than_random": avg_log_loss < 0.693
@@ -301,6 +363,11 @@ def run_k_optimization(
         f.write(f"Validation faceoffs evaluated: {valid_predictions}\n")
         f.write(f"Validation faceoffs skipped (unknown players): {skipped_faceoffs}\n")
         f.write(f"Validation faceoffs skipped (<= 50 total faceoffs): {skipped_low_faceoffs}\n")
+        if min_faceoffs_per_minute is not None:
+            f.write(
+                "Validation faceoffs skipped (faceoffs/min < "
+                f"{min_faceoffs_per_minute}): {skipped_low_faceoffs_per_minute}\n"
+            )
         f.write(f"LOG LOSS: {avg_log_loss:.6f}\n")
         f.write(f"Better than random (0.693): {'YES' if avg_log_loss < 0.693 else 'NO'}\n")
     
@@ -332,6 +399,18 @@ if __name__ == "__main__":
         default="faceoff_data",
         help="Directory containing *_faceoff_data.json files",
     )
+    parser.add_argument(
+        "--initial-elo-dir",
+        type=str,
+        default="player_elos",
+        help="Directory containing initial per-player ELO JSONs (starting state)",
+    )
+    parser.add_argument(
+        "--min-faceoffs-per-minute",
+        type=float,
+        default=None,
+        help="If set, only evaluate validation rows where both players meet this faceoffs/min threshold",
+    )
     args = parser.parse_args()
 
     # Determine K values to run
@@ -353,6 +432,7 @@ if __name__ == "__main__":
         f.write("NHL Faceoff ELO System\n")
         f.write("80/20 Train/Validation Split (by faceoff count, chronological)\n")
         f.write(f"K values: {k_values}\n")
+        f.write(f"Initial ELO dir: {args.initial_elo_dir}\n")
     
     # Run optimization for selected K values
     all_results = []
@@ -361,6 +441,8 @@ if __name__ == "__main__":
             k_value=k,
             faceoff_dir=args.faceoff_dir,
             findings_file=findings_file,
+            initial_elo_dir=args.initial_elo_dir,
+            min_faceoffs_per_minute=args.min_faceoffs_per_minute,
         )
         all_results.append(result)
     
