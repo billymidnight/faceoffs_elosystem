@@ -3,10 +3,11 @@ K-Value Optimizer for NHL Faceoff ELO System
 Tests different K values and evaluates with Log Loss.
 """
 
+import argparse
 import json
 import math
 from pathlib import Path
-from copy import deepcopy
+from functools import lru_cache
 
 
 def calculate_expected_score(rating_a: float, rating_b: float) -> float:
@@ -35,7 +36,24 @@ def log_loss_single(predicted_prob: float, actual: int) -> float:
         return -math.log(1 - predicted_prob)
 
 
-def run_k_optimization(k_value: int, faceoff_dir: str = "faceoff_data"):
+@lru_cache(maxsize=None)
+def _get_games_and_total_faceoffs(faceoff_dir: str) -> tuple[tuple[Path, ...], int]:
+    """Return chronological game files and total faceoff-row count (cached)."""
+    faceoff_path = Path(faceoff_dir)
+    all_games = tuple(sorted(faceoff_path.glob("*_faceoff_data.json")))
+    total_faceoffs_all = 0
+    for game_file in all_games:
+        with open(game_file, 'r') as f:
+            faceoffs = json.load(f)
+        total_faceoffs_all += len(faceoffs)
+    return all_games, total_faceoffs_all
+
+
+def run_k_optimization(
+    k_value: int,
+    faceoff_dir: str = "faceoff_data",
+    findings_file: str | Path = "k_val_findings.txt",
+):
     """
     Run ELO training and validation for a specific K value.
     """
@@ -43,20 +61,20 @@ def run_k_optimization(k_value: int, faceoff_dir: str = "faceoff_data"):
     print(f"RUNNING K = {k_value}")
     print(f"{'='*60}")
     
-    faceoff_path = Path(faceoff_dir)
-    
-    # Get all games sorted chronologically
-    all_games = sorted(faceoff_path.glob("*_faceoff_data.json"))
+    # Get all games (chronological) and total faceoff rows (cached per directory)
+    all_games, total_faceoffs_all = _get_games_and_total_faceoffs(faceoff_dir)
     total_games = len(all_games)
-    
-    # 80/20 split
-    train_count = int(total_games * 0.8)
-    train_games = all_games[:train_count]
-    val_games = all_games[train_count:]
-    
+
+    # 80/20 split by NUMBER OF FACEOFFS (chronological), not by games.
+    # This can split within a single game file.
     print(f"Total games: {total_games}")
-    print(f"Training games: {len(train_games)}")
-    print(f"Validation games: {len(val_games)}")
+
+    train_faceoffs_target = int(total_faceoffs_all * 0.8)
+    val_faceoffs_target = total_faceoffs_all - train_faceoffs_target
+
+    print(f"Total faceoffs (all games): {total_faceoffs_all}")
+    print(f"Training faceoffs target (80%): {train_faceoffs_target}")
+    print(f"Validation faceoffs target (20%): {val_faceoffs_target}")
     
     # Initialize all players with default ELO
     players = {}  # player_id -> {elo, faceoffs_taken, offensive, defensive, neutral}
@@ -73,156 +91,277 @@ def run_k_optimization(k_value: int, faceoff_dir: str = "faceoff_data"):
             }
         return players[player_id]
     
-    # ==================== TRAINING PHASE ====================
+    # ==================== TRAINING + VALIDATION (FACEOFF-BASED SPLIT) ====================
     print(f"\nTraining with K={k_value}...")
-    
-    train_faceoffs = 0
-    for i, game_file in enumerate(train_games):
-        with open(game_file, 'r') as f:
-            faceoffs = json.load(f)
-        
-        for fo in faceoffs:
-            details = fo.get("details", {})
-            winner_id = details.get("winningPlayerId")
-            loser_id = details.get("losingPlayerId")
-            zone_code = details.get("zoneCode", "N")
-            
-            if not (winner_id and loser_id):
-                continue
-            
-            winner = get_or_create_player(winner_id)
-            loser = get_or_create_player(loser_id)
-            
-            # Calculate expected scores
-            winner_expected = calculate_expected_score(winner['elo'], loser['elo'])
-            loser_expected = calculate_expected_score(loser['elo'], winner['elo'])
-            
-            # Update ELOs
-            winner['elo'] = update_elo(winner['elo'], winner_expected, 1, k_value)
-            loser['elo'] = update_elo(loser['elo'], loser_expected, 0, k_value)
-            
-            # Update faceoff counts
-            winner['faceoffs_taken'] += 1
-            loser['faceoffs_taken'] += 1
-            
-            # Update zone counts
-            if zone_code == "N":
-                winner['neutral_faceoffs'] += 1
-                loser['neutral_faceoffs'] += 1
-            elif zone_code == "O":
-                winner['offensive_faceoffs'] += 1
-                loser['defensive_faceoffs'] += 1
-            elif zone_code == "D":
-                winner['defensive_faceoffs'] += 1
-                loser['offensive_faceoffs'] += 1
-            
-            train_faceoffs += 1
-        
-        if (i + 1) % 500 == 0:
-            print(f"  Trained on {i + 1}/{len(train_games)} games...")
-    
-    print(f"Training complete: {train_faceoffs} faceoffs processed")
-    print(f"Players with ELO ratings: {len(players)}")
-    
-    # ==================== SAVE ELOs TO FOLDER ====================
+
+    train_games_set: set[Path] = set()
+    val_games_set: set[Path] = set()
+
+    train_faceoffs_assigned = 0  # raw faceoff rows assigned to training (includes any skipped rows)
+    val_faceoffs_assigned = 0    # raw faceoff rows assigned to validation
+    train_faceoffs_processed = 0  # valid rows processed into ELO
+    val_faceoffs_processed = 0    # valid validation rows processed into ELO (online training)
+
+    # Validation metrics
+    total_log_loss = 0.0
+    valid_predictions = 0
+    skipped_faceoffs = 0
+    skipped_low_faceoffs = 0
+    new_players_in_validation = 0
+
+    training_complete = False
+
     output_dir = Path(f"k={k_value}_elos")
     output_dir.mkdir(exist_ok=True)
-    
+
+    for i, game_file in enumerate(all_games):
+        with open(game_file, 'r') as f:
+            faceoffs = json.load(f)
+
+        for fo in faceoffs:
+            # Decide whether this faceoff row goes to training or validation.
+            if train_faceoffs_assigned < train_faceoffs_target:
+                train_games_set.add(game_file)
+                train_faceoffs_assigned += 1
+
+                details = fo.get("details", {})
+                winner_id = details.get("winningPlayerId")
+                loser_id = details.get("losingPlayerId")
+                zone_code = details.get("zoneCode", "N")
+
+                if not (winner_id and loser_id):
+                    continue
+
+                winner = get_or_create_player(winner_id)
+                loser = get_or_create_player(loser_id)
+
+                # Calculate expected scores
+                winner_expected = calculate_expected_score(winner['elo'], loser['elo'])
+                loser_expected = calculate_expected_score(loser['elo'], winner['elo'])
+
+                # Update ELOs
+                winner['elo'] = update_elo(winner['elo'], winner_expected, 1, k_value)
+                loser['elo'] = update_elo(loser['elo'], loser_expected, 0, k_value)
+
+                # Update faceoff counts
+                winner['faceoffs_taken'] += 1
+                loser['faceoffs_taken'] += 1
+
+                # Update zone counts
+                if zone_code == "N":
+                    winner['neutral_faceoffs'] += 1
+                    loser['neutral_faceoffs'] += 1
+                elif zone_code == "O":
+                    winner['offensive_faceoffs'] += 1
+                    loser['defensive_faceoffs'] += 1
+                elif zone_code == "D":
+                    winner['defensive_faceoffs'] += 1
+                    loser['offensive_faceoffs'] += 1
+
+                train_faceoffs_processed += 1
+            else:
+                # Transition: training is complete the first time we see a validation row.
+                if not training_complete:
+                    training_complete = True
+                    print(
+                        f"Training complete: {train_faceoffs_assigned} faceoff rows assigned "
+                        f"({train_faceoffs_processed} processed into ELO)"
+                    )
+                    print(f"Players with ELO ratings: {len(players)}")
+                    print(f"\nValidating on remaining faceoffs (target: {val_faceoffs_target})...")
+
+                val_games_set.add(game_file)
+                val_faceoffs_assigned += 1
+
+                details = fo.get("details", {})
+                winner_id = details.get("winningPlayerId")
+                loser_id = details.get("losingPlayerId")
+                zone_code = details.get("zoneCode", "N")
+
+                if not (winner_id and loser_id):
+                    continue
+
+                # Online evaluation: predict with CURRENT ELOs, then update ELOs using the result.
+                # Create players if they didn't appear in training (they'll start at the default ELO).
+                if winner_id not in players:
+                    get_or_create_player(winner_id)
+                    new_players_in_validation += 1
+                if loser_id not in players:
+                    get_or_create_player(loser_id)
+                    new_players_in_validation += 1
+
+                winner = players[winner_id]
+                loser = players[loser_id]
+
+                # Apply the log-loss filter based on total faceoffs taken SO FAR (before this faceoff).
+                winner_taken = winner.get('faceoffs_taken', 0)
+                loser_taken = loser.get('faceoffs_taken', 0)
+
+                # Predict probability (pre-update)
+                predicted_prob = calculate_expected_score(winner['elo'], loser['elo'])
+
+                if winner_taken > 50 and loser_taken > 50:
+                    loss = log_loss_single(predicted_prob, 1)
+                    total_log_loss += loss
+                    valid_predictions += 1
+                else:
+                    skipped_low_faceoffs += 1
+
+                # Update ELOs (post-eval) and counts (continue training during validation)
+                winner_expected = predicted_prob
+                loser_expected = calculate_expected_score(loser['elo'], winner['elo'])
+                winner['elo'] = update_elo(winner['elo'], winner_expected, 1, k_value)
+                loser['elo'] = update_elo(loser['elo'], loser_expected, 0, k_value)
+
+                winner['faceoffs_taken'] += 1
+                loser['faceoffs_taken'] += 1
+
+                if zone_code == "N":
+                    winner['neutral_faceoffs'] += 1
+                    loser['neutral_faceoffs'] += 1
+                elif zone_code == "O":
+                    winner['offensive_faceoffs'] += 1
+                    loser['defensive_faceoffs'] += 1
+                elif zone_code == "D":
+                    winner['defensive_faceoffs'] += 1
+                    loser['offensive_faceoffs'] += 1
+
+                val_faceoffs_processed += 1
+
+        if (i + 1) % 500 == 0 and train_faceoffs_assigned < train_faceoffs_target:
+            print(f"  Scanned {i + 1}/{len(all_games)} games... (training faceoffs assigned: {train_faceoffs_assigned}/{train_faceoffs_target})")
+
+    # If we never hit validation (e.g., no faceoffs), still report training completion.
+    if not training_complete:
+        print(
+            f"Training complete: {train_faceoffs_assigned} faceoff rows assigned "
+            f"({train_faceoffs_processed} processed into ELO)"
+        )
+        print(f"Players with ELO ratings: {len(players)}")
+
+    # Save FINAL ELOs after training + online validation updates
     for player_id, player_data in players.items():
         filepath = output_dir / f"{player_id}.json"
         with open(filepath, 'w') as f:
             json.dump(player_data, f, indent=4)
-    
     print(f"Saved {len(players)} player ELOs to '{output_dir}/'")
-    
-    # ==================== VALIDATION PHASE ====================
-    print(f"\nValidating on {len(val_games)} games...")
-    
-    total_log_loss = 0
-    valid_predictions = 0
-    skipped_faceoffs = 0
-    
-    for game_file in val_games:
-        with open(game_file, 'r') as f:
-            faceoffs = json.load(f)
-        
-        for fo in faceoffs:
-            details = fo.get("details", {})
-            winner_id = details.get("winningPlayerId")
-            loser_id = details.get("losingPlayerId")
-            
-            if not (winner_id and loser_id):
-                continue
-            
-            # Skip if either player not in training data
-            if winner_id not in players or loser_id not in players:
-                skipped_faceoffs += 1
-                continue
-            
-            # Get ELOs from training
-            winner_elo = players[winner_id]['elo']
-            loser_elo = players[loser_id]['elo']
-            
-            # Calculate predicted probability that winner wins
-            # (We're predicting from winner's perspective since we know winner)
-            predicted_prob = calculate_expected_score(winner_elo, loser_elo)
-            
-            # Actual outcome: winner won = 1
-            loss = log_loss_single(predicted_prob, 1)
-            total_log_loss += loss
-            valid_predictions += 1
     
     avg_log_loss = total_log_loss / valid_predictions if valid_predictions > 0 else float('inf')
     
     print(f"\nValidation Results:")
     print(f"  Valid faceoffs evaluated: {valid_predictions}")
+    print(f"  New players introduced during validation: {new_players_in_validation}")
     print(f"  Skipped (unknown players): {skipped_faceoffs}")
+    print(f"  Skipped (<= 50 total faceoffs for either player): {skipped_low_faceoffs}")
     print(f"  Average Log Loss: {avg_log_loss:.6f}")
     print(f"  (Random baseline = 0.693)")
     
     # ==================== SAVE RESULTS ====================
     results = {
         "k_value": k_value,
-        "train_games": len(train_games),
-        "val_games": len(val_games),
-        "train_faceoffs": train_faceoffs,
+        "total_games": total_games,
+        "total_faceoffs": total_faceoffs_all,
+        "train_games": len(train_games_set),
+        "val_games": len(val_games_set),
+        # Faceoff-based split bookkeeping
+        "train_faceoffs_target": train_faceoffs_target,
+        "val_faceoffs_target": val_faceoffs_target,
+        "train_faceoffs_assigned": train_faceoffs_assigned,
+        "val_faceoffs_assigned": val_faceoffs_assigned,
+        # ELO training uses only valid rows with winner/loser ids
+        "train_faceoffs": train_faceoffs_processed,
+        "train_faceoffs_processed": train_faceoffs_processed,
+        "val_faceoffs_processed": val_faceoffs_processed,
         "val_faceoffs_evaluated": valid_predictions,
         "val_faceoffs_skipped": skipped_faceoffs,
+        "val_faceoffs_skipped_low_faceoffs": skipped_low_faceoffs,
+        "val_new_players": new_players_in_validation,
         "log_loss": avg_log_loss,
         "better_than_random": avg_log_loss < 0.693
     }
     
     # Append to findings file
-    findings_file = Path("k_val_findings.txt")
-    with open(findings_file, 'a') as f:
+    findings_path = Path(findings_file)
+    with open(findings_path, 'a') as f:
         f.write(f"\n{'='*50}\n")
         f.write(f"K = {k_value}\n")
         f.write(f"{'='*50}\n")
-        f.write(f"Training games: {len(train_games)}\n")
-        f.write(f"Validation games: {len(val_games)}\n")
-        f.write(f"Training faceoffs: {train_faceoffs}\n")
+        f.write("Split method: 80/20 by FACEOFF COUNT (chronological)\n")
+        f.write(f"Total games: {total_games}\n")
+        f.write(f"Total faceoffs (rows): {total_faceoffs_all}\n")
+        f.write(f"Training faceoffs target (rows): {train_faceoffs_target}\n")
+        f.write(f"Validation faceoffs target (rows): {val_faceoffs_target}\n")
+        f.write(f"Training games (contributed rows): {len(train_games_set)}\n")
+        f.write(f"Validation games (contributed rows): {len(val_games_set)}\n")
+        f.write(f"Training faceoffs assigned (rows): {train_faceoffs_assigned}\n")
+        f.write(f"Validation faceoffs assigned (rows): {val_faceoffs_assigned}\n")
+        f.write(f"Training faceoffs processed (valid): {train_faceoffs_processed}\n")
+        f.write(f"Validation faceoffs processed (valid, online updates): {val_faceoffs_processed}\n")
+        f.write(f"New players introduced during validation: {new_players_in_validation}\n")
         f.write(f"Validation faceoffs evaluated: {valid_predictions}\n")
-        f.write(f"Validation faceoffs skipped: {skipped_faceoffs}\n")
+        f.write(f"Validation faceoffs skipped (unknown players): {skipped_faceoffs}\n")
+        f.write(f"Validation faceoffs skipped (<= 50 total faceoffs): {skipped_low_faceoffs}\n")
         f.write(f"LOG LOSS: {avg_log_loss:.6f}\n")
         f.write(f"Better than random (0.693): {'YES' if avg_log_loss < 0.693 else 'NO'}\n")
     
-    print(f"\nResults appended to 'k_val_findings.txt'")
+    print(f"\nResults appended to '{findings_path}'")
     
     return results
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Optimize K for NHL faceoff ELO via validation log loss")
+    parser.add_argument("--k-min", type=int, default=5, help="Minimum K (inclusive) when using a range")
+    parser.add_argument("--k-max", type=int, default=50, help="Maximum K (inclusive) when using a range")
+    parser.add_argument("--k-step", type=int, default=5, help="Step size when using a range")
+    parser.add_argument(
+        "--k-list",
+        type=str,
+        default="",
+        help="Comma-separated list of K values (overrides --k-min/--k-max/--k-step). Example: 1,2,3,5,8",
+    )
+    parser.add_argument(
+        "--findings-file",
+        type=str,
+        default="k_val_findings.txt",
+        help="Path to findings output file",
+    )
+    parser.add_argument(
+        "--faceoff-dir",
+        type=str,
+        default="faceoff_data",
+        help="Directory containing *_faceoff_data.json files",
+    )
+    args = parser.parse_args()
+
+    # Determine K values to run
+    if args.k_list.strip():
+        k_values = [int(x.strip()) for x in args.k_list.split(",") if x.strip()]
+    else:
+        if args.k_step <= 0:
+            raise ValueError("--k-step must be a positive integer")
+        if args.k_max < args.k_min:
+            raise ValueError("--k-max must be >= --k-min")
+        k_values = list(range(args.k_min, args.k_max + 1, args.k_step))
+    if not k_values:
+        raise ValueError("No K values specified")
+
     # Clear findings file if starting fresh
-    findings_file = Path("k_val_findings.txt")
+    findings_file = Path(args.findings_file)
     with open(findings_file, 'w') as f:
         f.write("K-VALUE OPTIMIZATION RESULTS\n")
         f.write("NHL Faceoff ELO System\n")
-        f.write(f"80/20 Train/Validation Split\n")
+        f.write("80/20 Train/Validation Split (by faceoff count, chronological)\n")
+        f.write(f"K values: {k_values}\n")
     
-    # Run for all K values: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50
+    # Run optimization for selected K values
     all_results = []
-    for k in range(5, 55, 5):
-        result = run_k_optimization(k_value=k)
+    for k in k_values:
+        result = run_k_optimization(
+            k_value=k,
+            faceoff_dir=args.faceoff_dir,
+            findings_file=findings_file,
+        )
         all_results.append(result)
     
     # Print summary

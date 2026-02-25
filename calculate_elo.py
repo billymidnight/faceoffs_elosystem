@@ -9,7 +9,7 @@ from pathlib import Path
 
 
 # ELO Configuration
-K_FACTOR = 32  # How much ratings change per faceoff
+K_FACTOR = 3  # How much ratings change per faceoff
 STARTING_ELO = 1500
 
 
@@ -147,14 +147,30 @@ def run_elo_calculation(faceoff_dir: str = "faceoff_data", elo_dir: str = "playe
     sorted_players = sorted(players.values(), key=lambda x: x['elo'], reverse=True)
     
     for i, player in enumerate(sorted_players[:10], 1):
-        print(f"  {i:2}. Player {player['player_id']} | ELO: {player['elo']:.1f} | Faceoffs: {player['faceoffs_taken']}")
+        name = player.get('player_name', 'Unknown Player')
+        print(
+            f"  {i:2}. {name} ({player['player_id']}) | ELO: {player['elo']:.1f} | Faceoffs: {player['faceoffs_taken']}"
+        )
     
     print()
     print("BOTTOM 10 PLAYERS BY FINAL ELO:")
     print("-" * 40)
     
     for i, player in enumerate(sorted_players[-10:], 1):
-        print(f"  {i:2}. Player {player['player_id']} | ELO: {player['elo']:.1f} | Faceoffs: {player['faceoffs_taken']}")
+        name = player.get('player_name', 'Unknown Player')
+        print(
+            f"  {i:2}. {name} ({player['player_id']}) | ELO: {player['elo']:.1f} | Faceoffs: {player['faceoffs_taken']}"
+        )
+
+    # Show all players (names + ELOs)
+    print()
+    print("ALL PLAYERS BY FINAL ELO:")
+    print("-" * 60)
+    for i, player in enumerate(sorted_players, 1):
+        name = player.get('player_name', 'Unknown Player')
+        print(
+            f"  {i:4}. {name} ({player['player_id']}) | ELO: {player['elo']:.1f} | Faceoffs: {player['faceoffs_taken']}"
+        )
 
 
 if __name__ == "__main__":
