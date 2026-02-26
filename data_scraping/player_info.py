@@ -17,6 +17,7 @@ def get_player_info(player_num):
         player_data = {}
         player_data["name"] = response.json()['firstName']['default'] + " " + response.json()['lastName']['default']
         player_data["team"] = response.json().get('fullTeamName', {}).get('default', 'No Team')
+        player_data["position"] = response.json()['position']
         return player_data
     else:
         return {}
@@ -38,6 +39,7 @@ if __name__ == "__main__":
             player_info = get_player_info(player_id)
             player_data["player_name"] = player_info["name"]
             player_data["player_team"] = player_info["team"]
+            player_data["position"] = player_info["position"]
 
             with player_file.open("w", encoding="utf-8") as f:
                 json.dump(player_data, f, indent=4)
@@ -49,4 +51,4 @@ if __name__ == "__main__":
 
     if total_files > 0:
         print()
-    print("Done updating player names.")
+    print("Done updating player names, teams, and positions.")

@@ -23,8 +23,8 @@ def faceoffs_per_minute(player: Dict) -> float:
 
 
 def compute_team_elo(player_ids: List[int], player_elos_dir: str = "player_elos", alpha: float = 0.8, beta: float = 0.2) -> Tuple[float, Dict[int, float], Dict[int, Dict]]:
-    if len(player_ids) != 5:
-        raise ValueError("Exactly 5 player ids must be provided")
+    if not player_ids:
+        raise ValueError("At least one player id must be provided")
 
     players = []
     for pid in player_ids:
@@ -83,12 +83,12 @@ def compute_team_elo(player_ids: List[int], player_elos_dir: str = "player_elos"
 
 
 def main(argv: List[str]):
-    if len(argv) < 6:
-        print("Usage: python team_elo.py <id1> <id2> <id3> <id4> <id5>")
+    if len(argv) < 2:
+        print("Usage: python team_elo.py <id1> [id2 id3 ...]")
         sys.exit(2)
 
     try:
-        ids = [int(x) for x in argv[1:6]]
+        ids = [int(x) for x in argv[1:]]
     except ValueError:
         print("Player ids must be integers")
         sys.exit(2)
