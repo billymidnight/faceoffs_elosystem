@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 TOI_JSON = Path("player_total_time_on_ice.json")
-PLAYER_ELOS_DIR = Path("player_elos")
+PLAYER_ELOS_DIR = Path("../player_elos")
 
 
 def main() -> None:
