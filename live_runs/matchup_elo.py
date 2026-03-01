@@ -1,14 +1,24 @@
 import json
 import os
 import sys
-from typing import List, Dict
+from typing import List, Dict, Optional
 
-def load_player(player_id: int, player_elos_dir: str = "player_elos") -> Dict:
+def load_player(player_id: int, player_elos_dir: str = "../player_elos") -> Optional[Dict]:
     path = os.path.join(player_elos_dir, f"{player_id}.json")
     if not os.path.exists(path):
-        raise FileNotFoundError(f"Player file not found: {path}")
+        return None
     with open(path, "r") as fh:
         return json.load(fh)
+
+
+def load_players(player_ids: List[int], player_elos_dir: str = "../player_elos", label: str = "Team") -> List[Dict]:
+    """Load multiple players, ignoring missing player files."""
+    players: List[Dict] = []
+    for pid in player_ids:
+        player = load_player(pid, player_elos_dir)
+        if player is not None:
+            players.append(player)
+    return players
 
 def faceoffs_per_minute(player: Dict) -> float:
     seconds = player.get("time_on_ice_seconds", 0) or 0
@@ -92,11 +102,11 @@ def main():
         print("Error: Both sides must have at least one player.")
         return
 
-    try:
-        players1 = [load_player(pid) for pid in team1_ids]
-        players2 = [load_player(pid) for pid in team2_ids]
-    except FileNotFoundError as e:
-        print(f"Error: {e}")
+    players1 = load_players(team1_ids, label="Team 1")
+    players2 = load_players(team2_ids, label="Team 2")
+
+    if not players1 or not players2:
+        print("Error: Both sides must have at least one valid player after filtering missing files.")
         return
 
     # Calculate weights for each set of players
