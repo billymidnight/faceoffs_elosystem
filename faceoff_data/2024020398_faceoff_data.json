@@ -1,991 +1,1276 @@
-[
-    {
-        "eventId": 51,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+{
+    "game_id": "2024020398",
+    "faceoffs": [
+        {
+            "eventId": 51,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "20:00",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 9,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8481523,
+                "winningPlayerId": 8477500,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
         },
-        "timeInPeriod": "00:00",
-        "timeRemaining": "20:00",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 9,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8481523,
-            "winningPlayerId": 8477500,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
+        {
+            "eventId": 53,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "01:21",
+            "timeRemaining": "18:39",
+            "situationCode": "1451",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 29,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475231,
+                "winningPlayerId": 8480018,
+                "xCoord": -69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 54,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "01:28",
+            "timeRemaining": "18:32",
+            "situationCode": "1451",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 33,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8480018,
+                "winningPlayerId": 8475754,
+                "xCoord": -69,
+                "yCoord": 22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 56,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "06:40",
+            "timeRemaining": "13:20",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 102,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8475231,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 57,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "08:17",
+            "timeRemaining": "11:43",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 119,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8479339,
+                "xCoord": -69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 58,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "13:02",
+            "timeRemaining": "06:58",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 182,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8477989,
+                "winningPlayerId": 8476419,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 59,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "14:03",
+            "timeRemaining": "05:57",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 195,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8483515,
+                "winningPlayerId": 8475754,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 60,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "14:17",
+            "timeRemaining": "05:43",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 201,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8478133,
+                "xCoord": 69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 62,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "17:25",
+            "timeRemaining": "02:35",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 240,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475151,
+                "winningPlayerId": 8476981,
+                "xCoord": -69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 63,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "19:11",
+            "timeRemaining": "00:49",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 265,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8481523,
+                "winningPlayerId": 8481237,
+                "xCoord": -20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 64,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "19:20",
+            "timeRemaining": "00:40",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 268,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8476419,
+                "winningPlayerId": 8481523,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 65,
+            "periodDescriptor": {
+                "number": 1,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "19:54",
+            "timeRemaining": "00:06",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 275,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8477500,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 66,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "20:00",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 284,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8477989,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 68,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "01:58",
+            "timeRemaining": "18:02",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 306,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475231,
+                "winningPlayerId": 8481618,
+                "xCoord": -20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 69,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "03:59",
+            "timeRemaining": "16:01",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 327,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8475314,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 70,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "06:49",
+            "timeRemaining": "13:11",
+            "situationCode": "1451",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 362,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8480018,
+                "xCoord": 69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 71,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "07:23",
+            "timeRemaining": "12:37",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 370,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8477989,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 72,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "07:40",
+            "timeRemaining": "12:20",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 374,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8481237,
+                "winningPlayerId": 8477989,
+                "xCoord": 69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 73,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "07:45",
+            "timeRemaining": "12:15",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 380,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8477500,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 74,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "08:18",
+            "timeRemaining": "11:42",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 386,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8480018,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 75,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "09:01",
+            "timeRemaining": "10:59",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 392,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8477500,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 76,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "10:24",
+            "timeRemaining": "09:36",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 409,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8481523,
+                "winningPlayerId": 8481237,
+                "xCoord": 69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 77,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "11:00",
+            "timeRemaining": "09:00",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 414,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8481618,
+                "xCoord": -20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 78,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "15:16",
+            "timeRemaining": "04:44",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 461,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8480018,
+                "winningPlayerId": 8475754,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 79,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "15:21",
+            "timeRemaining": "04:39",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 464,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8480018,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 80,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "15:47",
+            "timeRemaining": "04:13",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 471,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8477500,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 81,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "16:27",
+            "timeRemaining": "03:33",
+            "situationCode": "1541",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 477,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8478133,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 82,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "18:35",
+            "timeRemaining": "01:25",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 505,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8481523,
+                "winningPlayerId": 8477500,
+                "xCoord": -20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 83,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "18:55",
+            "timeRemaining": "01:05",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 513,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8480018,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 84,
+            "periodDescriptor": {
+                "number": 2,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "19:56",
+            "timeRemaining": "00:04",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 524,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8476419,
+                "winningPlayerId": 8480018,
+                "xCoord": -69,
+                "yCoord": 22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 85,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "20:00",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 534,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8480018,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 87,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "02:33",
+            "timeRemaining": "17:27",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 565,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8475231,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 88,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "05:26",
+            "timeRemaining": "14:34",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 607,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8481523,
+                "winningPlayerId": 8475231,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 90,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "07:54",
+            "timeRemaining": "12:06",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 642,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8480018,
+                "winningPlayerId": 8481237,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 91,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "09:15",
+            "timeRemaining": "10:45",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 659,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8484958,
+                "winningPlayerId": 8476981,
+                "xCoord": -20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 92,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "13:19",
+            "timeRemaining": "06:41",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 703,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8478133,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 93,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "13:59",
+            "timeRemaining": "06:01",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 715,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8481618,
+                "xCoord": 20,
+                "yCoord": -22,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 94,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "16:01",
+            "timeRemaining": "03:59",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 737,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475231,
+                "winningPlayerId": 8481618,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 95,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "16:20",
+            "timeRemaining": "03:40",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 739,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475231,
+                "winningPlayerId": 8481618,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 97,
+            "periodDescriptor": {
+                "number": 3,
+                "periodType": "REG",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "19:42",
+            "timeRemaining": "00:18",
+            "situationCode": "1551",
+            "homeTeamDefendingSide": "right",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 789,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8475754,
+                "winningPlayerId": 8480018,
+                "xCoord": 69,
+                "yCoord": 22,
+                "zoneCode": "D"
+            }
+        },
+        {
+            "eventId": 98,
+            "periodDescriptor": {
+                "number": 4,
+                "periodType": "OT",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "00:00",
+            "timeRemaining": "05:00",
+            "situationCode": "1331",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 799,
+            "details": {
+                "eventOwnerTeamId": 8,
+                "losingPlayerId": 8477500,
+                "winningPlayerId": 8477989,
+                "xCoord": 0,
+                "yCoord": 0,
+                "zoneCode": "N"
+            }
+        },
+        {
+            "eventId": 651,
+            "periodDescriptor": {
+                "number": 4,
+                "periodType": "OT",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "01:48",
+            "timeRemaining": "03:12",
+            "situationCode": "1331",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 814,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8478133,
+                "winningPlayerId": 8475754,
+                "xCoord": -69,
+                "yCoord": -22,
+                "zoneCode": "O"
+            }
+        },
+        {
+            "eventId": 652,
+            "periodDescriptor": {
+                "number": 4,
+                "periodType": "OT",
+                "maxRegulationPeriods": 3
+            },
+            "timeInPeriod": "02:06",
+            "timeRemaining": "02:54",
+            "situationCode": "1331",
+            "homeTeamDefendingSide": "left",
+            "typeCode": 502,
+            "typeDescKey": "faceoff",
+            "sortOrder": 819,
+            "details": {
+                "eventOwnerTeamId": 2,
+                "losingPlayerId": 8477989,
+                "winningPlayerId": 8477500,
+                "xCoord": 20,
+                "yCoord": 22,
+                "zoneCode": "N"
+            }
         }
-    },
-    {
-        "eventId": 53,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+    ],
+    "player_time_on_ice": {
+        "8484958": {
+            "name": "M. Tsyplakov",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:15:47",
+            "toi_seconds": 947
         },
-        "timeInPeriod": "01:21",
-        "timeRemaining": "18:39",
-        "situationCode": "1451",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 29,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475231,
-            "winningPlayerId": 8480018,
-            "xCoord": -69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 54,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481601": {
+            "name": "S. Holmstrom",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:18:48",
+            "toi_seconds": 1128
         },
-        "timeInPeriod": "01:28",
-        "timeRemaining": "18:32",
-        "situationCode": "1451",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 33,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8480018,
-            "winningPlayerId": 8475754,
-            "xCoord": -69,
-            "yCoord": 22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 56,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8477500": {
+            "name": "B. Horvat",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:21:59",
+            "toi_seconds": 1319
         },
-        "timeInPeriod": "06:40",
-        "timeRemaining": "13:20",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 102,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8475231,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 57,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8474709": {
+            "name": "M. Martin",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:10:13",
+            "toi_seconds": 613
         },
-        "timeInPeriod": "08:17",
-        "timeRemaining": "11:43",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 119,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8479339,
-            "xCoord": -69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 58,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8477392": {
+            "name": "H. Fasching",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:11:16",
+            "toi_seconds": 676
         },
-        "timeInPeriod": "13:02",
-        "timeRemaining": "06:58",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 182,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8477989,
-            "winningPlayerId": 8476419,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 59,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475151": {
+            "name": "K. Palmieri",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:19:45",
+            "toi_seconds": 1185
         },
-        "timeInPeriod": "14:03",
-        "timeRemaining": "05:57",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 195,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8483515,
-            "winningPlayerId": 8475754,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 60,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8480789": {
+            "name": "O. Wahlstrom",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:11:31",
+            "toi_seconds": 691
         },
-        "timeInPeriod": "14:17",
-        "timeRemaining": "05:43",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 201,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8478133,
-            "xCoord": 69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 62,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475314": {
+            "name": "A. Lee",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:19:10",
+            "toi_seconds": 1150
         },
-        "timeInPeriod": "17:25",
-        "timeRemaining": "02:35",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 240,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475151,
-            "winningPlayerId": 8476981,
-            "xCoord": -69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 63,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475754": {
+            "name": "B. Nelson",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:19:24",
+            "toi_seconds": 1164
         },
-        "timeInPeriod": "19:11",
-        "timeRemaining": "00:49",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 265,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8481523,
-            "winningPlayerId": 8481237,
-            "xCoord": -20,
-            "yCoord": 22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 64,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481237": {
+            "name": "K. MacLean",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:13:19",
+            "toi_seconds": 799
         },
-        "timeInPeriod": "19:20",
-        "timeRemaining": "00:40",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 268,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8476419,
-            "winningPlayerId": 8481523,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 65,
-        "periodDescriptor": {
-            "number": 1,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8476419": {
+            "name": "J. Pageau",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:14:28",
+            "toi_seconds": 868
         },
-        "timeInPeriod": "19:54",
-        "timeRemaining": "00:06",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 275,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8477500,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 66,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475231": {
+            "name": "C. Cizikas",
+            "team": "away",
+            "position": "forward",
+            "toi": "0:11:12",
+            "toi_seconds": 672
         },
-        "timeInPeriod": "00:00",
-        "timeRemaining": "20:00",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 284,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8477989,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 68,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8477506": {
+            "name": "R. Pulock",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:22:46",
+            "toi_seconds": 1366
         },
-        "timeInPeriod": "01:58",
-        "timeRemaining": "18:02",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 306,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475231,
-            "winningPlayerId": 8481618,
-            "xCoord": -20,
-            "yCoord": 22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 69,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8480865": {
+            "name": "N. Dobson",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:24:40",
+            "toi_seconds": 1480
         },
-        "timeInPeriod": "03:59",
-        "timeRemaining": "16:01",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 327,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8475314,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 70,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8476429": {
+            "name": "S. Mayfield",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:15:16",
+            "toi_seconds": 916
         },
-        "timeInPeriod": "06:49",
-        "timeRemaining": "13:11",
-        "situationCode": "1451",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 362,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8480018,
-            "xCoord": 69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 71,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481014": {
+            "name": "A. Romanov",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:22:59",
+            "toi_seconds": 1379
         },
-        "timeInPeriod": "07:23",
-        "timeRemaining": "12:37",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 370,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8477989,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 72,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8480306": {
+            "name": "G. Hutton",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:15:19",
+            "toi_seconds": 919
         },
-        "timeInPeriod": "07:40",
-        "timeRemaining": "12:20",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 374,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8481237,
-            "winningPlayerId": 8477989,
-            "xCoord": 69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 73,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8483448": {
+            "name": "I. George",
+            "team": "away",
+            "position": "defens",
+            "toi": "0:17:31",
+            "toi_seconds": 1051
         },
-        "timeInPeriod": "07:45",
-        "timeRemaining": "12:15",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 380,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8477500,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 74,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8478009": {
+            "name": "I. Sorokin",
+            "team": "away",
+            "position": "goalie",
+            "toi": "1:02:39",
+            "toi_seconds": 3759
         },
-        "timeInPeriod": "08:18",
-        "timeRemaining": "11:42",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 386,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8480018,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 75,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8473575": {
+            "name": "S. Varlamov",
+            "team": "away",
+            "position": "goalie",
+            "toi": "0:00:00",
+            "toi_seconds": 0
         },
-        "timeInPeriod": "09:01",
-        "timeRemaining": "10:59",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 392,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8477500,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 76,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475848": {
+            "name": "B. Gallagher",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:11:22",
+            "toi_seconds": 682
         },
-        "timeInPeriod": "10:24",
-        "timeRemaining": "09:36",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 409,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8481523,
-            "winningPlayerId": 8481237,
-            "xCoord": 69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 77,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481540": {
+            "name": "C. Caufield",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:18:26",
+            "toi_seconds": 1106
         },
-        "timeInPeriod": "11:00",
-        "timeRemaining": "09:00",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 414,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8481618,
-            "xCoord": -20,
-            "yCoord": 22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 78,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8480018": {
+            "name": "N. Suzuki",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:19:17",
+            "toi_seconds": 1157
         },
-        "timeInPeriod": "15:16",
-        "timeRemaining": "04:44",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 461,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8480018,
-            "winningPlayerId": 8475754,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 79,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481618": {
+            "name": "A. Newhook",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:16:17",
+            "toi_seconds": 977
         },
-        "timeInPeriod": "15:21",
-        "timeRemaining": "04:39",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 464,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8480018,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 80,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8476981": {
+            "name": "J. Anderson",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:13:02",
+            "toi_seconds": 782
         },
-        "timeInPeriod": "15:47",
-        "timeRemaining": "04:13",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 471,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8477500,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 81,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8483515": {
+            "name": "J. Slafkovsk\u00fd",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:17:23",
+            "toi_seconds": 1043
         },
-        "timeInPeriod": "16:27",
-        "timeRemaining": "03:33",
-        "situationCode": "1541",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 477,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8478133,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 82,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8477989": {
+            "name": "C. Dvorak",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:13:01",
+            "toi_seconds": 781
         },
-        "timeInPeriod": "18:35",
-        "timeRemaining": "01:25",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 505,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8481523,
-            "winningPlayerId": 8477500,
-            "xCoord": -20,
-            "yCoord": 22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 83,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8476469": {
+            "name": "J. Armia",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:13:09",
+            "toi_seconds": 789
         },
-        "timeInPeriod": "18:55",
-        "timeRemaining": "01:05",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 513,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8480018,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 84,
-        "periodDescriptor": {
-            "number": 2,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8482476": {
+            "name": "E. Heineman",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:09:24",
+            "toi_seconds": 564
         },
-        "timeInPeriod": "19:56",
-        "timeRemaining": "00:04",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 524,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8476419,
-            "winningPlayerId": 8480018,
-            "xCoord": -69,
-            "yCoord": 22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 85,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8478133": {
+            "name": "J. Evans",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:15:11",
+            "toi_seconds": 911
         },
-        "timeInPeriod": "00:00",
-        "timeRemaining": "20:00",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 534,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8480018,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 87,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481523": {
+            "name": "K. Dach",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:17:33",
+            "toi_seconds": 1053
         },
-        "timeInPeriod": "02:33",
-        "timeRemaining": "17:27",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 565,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8475231,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 88,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8479339": {
+            "name": "P. Laine",
+            "team": "home",
+            "position": "forward",
+            "toi": "0:17:27",
+            "toi_seconds": 1047
         },
-        "timeInPeriod": "05:26",
-        "timeRemaining": "14:34",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 607,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8481523,
-            "winningPlayerId": 8475231,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 90,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8476875": {
+            "name": "M. Matheson",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:25:19",
+            "toi_seconds": 1519
         },
-        "timeInPeriod": "07:54",
-        "timeRemaining": "12:06",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 642,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8480018,
-            "winningPlayerId": 8481237,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 91,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8482087": {
+            "name": "K. Guhle",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:20:03",
+            "toi_seconds": 1203
         },
-        "timeInPeriod": "09:15",
-        "timeRemaining": "10:45",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 659,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8484958,
-            "winningPlayerId": 8476981,
-            "xCoord": -20,
-            "yCoord": 22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 92,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8481593": {
+            "name": "J. Struble",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:17:17",
+            "toi_seconds": 1037
         },
-        "timeInPeriod": "13:19",
-        "timeRemaining": "06:41",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 703,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8478133,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 93,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8483457": {
+            "name": "L. Hutson",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:20:34",
+            "toi_seconds": 1234
         },
-        "timeInPeriod": "13:59",
-        "timeRemaining": "06:01",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 715,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8481618,
-            "xCoord": 20,
-            "yCoord": -22,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 94,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8475233": {
+            "name": "D. Savard",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:18:35",
+            "toi_seconds": 1115
         },
-        "timeInPeriod": "16:01",
-        "timeRemaining": "03:59",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 737,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475231,
-            "winningPlayerId": 8481618,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 95,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8482964": {
+            "name": "A. Xhekaj",
+            "team": "home",
+            "position": "defens",
+            "toi": "0:18:50",
+            "toi_seconds": 1130
         },
-        "timeInPeriod": "16:20",
-        "timeRemaining": "03:40",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 739,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475231,
-            "winningPlayerId": 8481618,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 97,
-        "periodDescriptor": {
-            "number": 3,
-            "periodType": "REG",
-            "maxRegulationPeriods": 3
+        "8480051": {
+            "name": "C. Primeau",
+            "team": "home",
+            "position": "goalie",
+            "toi": "0:00:00",
+            "toi_seconds": 0
         },
-        "timeInPeriod": "19:42",
-        "timeRemaining": "00:18",
-        "situationCode": "1551",
-        "homeTeamDefendingSide": "right",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 789,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8475754,
-            "winningPlayerId": 8480018,
-            "xCoord": 69,
-            "yCoord": 22,
-            "zoneCode": "D"
-        }
-    },
-    {
-        "eventId": 98,
-        "periodDescriptor": {
-            "number": 4,
-            "periodType": "OT",
-            "maxRegulationPeriods": 3
-        },
-        "timeInPeriod": "00:00",
-        "timeRemaining": "05:00",
-        "situationCode": "1331",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 799,
-        "details": {
-            "eventOwnerTeamId": 8,
-            "losingPlayerId": 8477500,
-            "winningPlayerId": 8477989,
-            "xCoord": 0,
-            "yCoord": 0,
-            "zoneCode": "N"
-        }
-    },
-    {
-        "eventId": 651,
-        "periodDescriptor": {
-            "number": 4,
-            "periodType": "OT",
-            "maxRegulationPeriods": 3
-        },
-        "timeInPeriod": "01:48",
-        "timeRemaining": "03:12",
-        "situationCode": "1331",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 814,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8478133,
-            "winningPlayerId": 8475754,
-            "xCoord": -69,
-            "yCoord": -22,
-            "zoneCode": "O"
-        }
-    },
-    {
-        "eventId": 652,
-        "periodDescriptor": {
-            "number": 4,
-            "periodType": "OT",
-            "maxRegulationPeriods": 3
-        },
-        "timeInPeriod": "02:06",
-        "timeRemaining": "02:54",
-        "situationCode": "1331",
-        "homeTeamDefendingSide": "left",
-        "typeCode": 502,
-        "typeDescKey": "faceoff",
-        "sortOrder": 819,
-        "details": {
-            "eventOwnerTeamId": 2,
-            "losingPlayerId": 8477989,
-            "winningPlayerId": 8477500,
-            "xCoord": 20,
-            "yCoord": 22,
-            "zoneCode": "N"
+        "8478470": {
+            "name": "S. Montembeault",
+            "team": "home",
+            "position": "goalie",
+            "toi": "1:02:26",
+            "toi_seconds": 3746
         }
     }
-]
+}
