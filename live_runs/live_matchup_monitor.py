@@ -65,6 +65,41 @@ def _now_est() -> str:
     return datetime.now(ZoneInfo("America/New_York")).strftime("%I:%M:%S %p ET")
 
 
+def _probability_to_american_odds(prob: float) -> str:
+    """Convert win probability (0..1) to an American odds string."""
+    if prob <= 0.0:
+        return "N/A"
+    if prob >= 1.0:
+        return "-INF"
+
+    if prob >= 0.5:
+        odds = -100.0 * prob / (1.0 - prob)
+    else:
+        odds = 100.0 * (1.0 - prob) / prob
+
+    rounded = int(round(odds))
+    if rounded > 0:
+        return f"+{rounded}"
+    return str(rounded)
+
+
+def _format_game_state(period: Optional[int], clock: Optional[str],
+                       status: Optional[str] = None) -> str:
+    """Create a compact game-state label for headers/status lines."""
+    period_txt = f"P{period}" if period is not None else "P?"
+    clock_txt = clock if clock else "--:--"
+    if status:
+        return f"{period_txt} {clock_txt} ({status})"
+    return f"{period_txt} {clock_txt}"
+
+
+def _is_game_complete(clock: Optional[str], status: Optional[str]) -> bool:
+    """Return True when the live feed indicates the game has ended."""
+    if clock != "00:00":
+        return False
+    return True
+
+
 # ─────────────────────────────────────────────────────────────────────
 # Game selection
 # ─────────────────────────────────────────────────────────────────────
@@ -184,19 +219,23 @@ def display_matchup(home_raw: list, away_raw: list,
     # -- overall probability ---------------------------------------------
     overall_home = 0.0
     print(f"\n{'─'*60}")
-    print(f"  {'Home Player':>22}  vs  {'Away Player':<22}  P(Home)")
+    print(f"  {'Home Player':>22}  vs  {'Away Player':<22}  P(Home)   Odds")
     print(f"{'─'*60}")
     for i, hp in enumerate(home_elo_players):
         for j, ap in enumerate(away_elo_players):
             p_win = win_probability(hp["elo"], ap["elo"])
             mw = home_weights[i] * away_weights[j]
             overall_home += p_win * mw
+            p_odds = _probability_to_american_odds(p_win)
             print(f"  {hp['player_name']:>22}  vs  {ap['player_name']:<22}  "
-                  f"{p_win:6.2%}  (wt {mw:5.2%})")
+                  f"{p_win:6.2%}  {p_odds:>5}  (wt {mw:5.2%})")
 
+    home_odds = _probability_to_american_odds(overall_home)
+    away_odds = _probability_to_american_odds(1 - overall_home)
     print(f"\n{'='*60}")
     print(f"  OVERALL  {home_name}: {overall_home:.2%}   "
           f"{away_name}: {1 - overall_home:.2%}")
+    print(f"           Odds  {home_name}: {home_odds}   {away_name}: {away_odds}")
     print(f"{'='*60}")
 
 
@@ -229,6 +268,16 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
 
         home_players = on_ice.get("home", [])
         away_players = on_ice.get("away", [])
+        game_clock = on_ice.get("clock")
+        game_period = on_ice.get("period")
+        game_status = on_ice.get("status")
+        game_state = _format_game_state(game_period, game_clock, game_status)
+
+        if _is_game_complete(game_clock, game_status):
+            os.system("clear" if os.name != "nt" else "cls")
+            print(f"🏁  {away_name} @ {home_name}  |  {game_state}")
+            print("\nGame clock reached 00:00 and game is complete. Stopping monitor.")
+            break
 
         # Detect if lineup changed so we don't spam identical output
         cur_home_ids = {_extract_player_id(p) for p in home_players} - {None}
@@ -237,15 +286,21 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
         if cur_home_ids != prev_home_ids or cur_away_ids != prev_away_ids or not prev_home_ids:
             # Clear terminal for a fresh view
             os.system("clear" if os.name != "nt" else "cls")
-            print(f"🏒  {away_name} @ {home_name}  |  Last updated: {_now_est()}")
+            print(f"🏒  {away_name} @ {home_name}  |  {game_state}  |  Last updated: {_now_est()}")
             display_matchup(home_players, away_players, home_name, away_name)
             prev_home_ids = cur_home_ids
             prev_away_ids = cur_away_ids
         else:
             # Lineup unchanged – just update the timestamp line
-            print(f"\r  ⏱  Last checked: {_now_est()}  (lineup unchanged)", end="", flush=True)
+            print(
+                f"\r  ⏱  Last checked: {_now_est()}  |  {game_state}  (lineup unchanged)",
+                end="",
+                flush=True,
+            )
 
         time.sleep(interval)
+
+    print("👋  Live monitor exited.")
 
 
 # ─────────────────────────────────────────────────────────────────────

@@ -230,12 +230,6 @@ def main() -> int:
 		description="Apply additional faceoff games to an existing set of player Elo JSON files.",
 	)
 	parser.add_argument(
-		"--k",
-		type=float,
-		required=True,
-		help="K value for Elo updates (example: 8 or 12.5)",
-	)
-	parser.add_argument(
 		"--player-elo-dir",
 		default="player_elos",
 		help="Directory containing current per-player Elo JSON files.",
@@ -252,9 +246,6 @@ def main() -> int:
 		help="Directory containing <game_id>_faceoff_data.json files.",
 	)
 	args = parser.parse_args()
-
-	if args.k <= 0:
-		raise SystemExit("--k must be greater than 0")
 
 	player_elo_dir = Path(args.player_elo_dir)
 	if not player_elo_dir.exists() or not player_elo_dir.is_dir():
@@ -280,7 +271,7 @@ def main() -> int:
 	processed, unknown_zone_count = apply_faceoff_updates(
 		players=players,
 		game_files=game_files,
-		k=args.k,
+		k=3,
 	)
 	toi_players_updated, toi_seconds_added = apply_time_on_ice_updates(
 		players=players,

@@ -30,22 +30,47 @@ def fetch_pbp(game_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
 	return r.json()
 
 
-def get_players_on_ice(game_id: str, api_key: Optional[str] = None) -> Dict[str, List[Dict[str, Any]]]:
+def _extract_game_state(pbp: Dict[str, Any], events: List[Dict[str, Any]]) -> Dict[str, Any]:
+	"""Extract game-state fields useful for live display."""
+	clock = pbp.get("clock")
+	period = pbp.get("period")
+	status = pbp.get("status")
+
+	if clock is None or period is None:
+		for ev in reversed(events):
+			if clock is None:
+				clock = ev.get("clock")
+			if period is None:
+				period = ev.get("period")
+			if clock is not None and period is not None:
+				break
+
+	return {"clock": clock, "period": period, "status": status}
+
+
+def get_players_on_ice(game_id: str, api_key: Optional[str] = None) -> Dict[str, Any]:
 	"""Return players currently on the ice for `game_id`.
 
 	Looks at the latest event that contains `on_ice` and returns the `home`
-	and `away` player lists (empty lists if not found).
+	and `away` player lists along with top-level game state like clock/period.
 	"""
 	pbp = fetch_pbp(game_id, api_key=api_key)
 	# events may be at top-level or nested inside `periods` -> `events`
 	events = pbp.get("events") or []
 	for period in pbp.get("periods", []):
 		events.extend(period.get("events") or [])
+	game_state = _extract_game_state(pbp, events)
 	# Search events in reverse chronological order for an `on_ice` field
 	for ev in reversed(events):
 		if "on_ice" in ev and ev["on_ice"]:
 			teams = ev["on_ice"]
-			result: Dict[str, List[Dict[str, Any]]] = {"home": [], "away": []}
+			result: Dict[str, Any] = {
+				"home": [],
+				"away": [],
+				"clock": game_state["clock"],
+				"period": game_state["period"],
+				"status": game_state["status"],
+			}
 			for t in teams:
 				team = t.get("team", {})
 				name = team.get("name", "")
@@ -86,7 +111,13 @@ def get_players_on_ice(game_id: str, api_key: Optional[str] = None) -> Dict[str,
 
 				result[side].extend(players)
 			return result
-	return {"home": [], "away": []}
+	return {
+		"home": [],
+		"away": [],
+		"clock": game_state["clock"],
+		"period": game_state["period"],
+		"status": game_state["status"],
+	}
 
 
 if __name__ == "__main__":
