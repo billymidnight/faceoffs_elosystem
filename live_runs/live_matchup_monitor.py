@@ -27,6 +27,7 @@ from matchup_elo import (
 
 # ── resolve player_elos directory relative to this file ─────────────
 PLAYER_ELOS_DIR = os.path.join(os.path.dirname(__file__), "..", "player_elos")
+FACEOFF_LOG_PATH = os.path.join(os.path.dirname(__file__), "faceoff_event_log.txt")
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -100,6 +101,26 @@ def _is_game_complete(clock: Optional[str], status: Optional[str]) -> bool:
     return True
 
 
+def _append_faceoff_log(
+    log_path: str,
+    event_description: str,
+    game_state: str,
+    away_name: str,
+    home_name: str,
+    monitor_lines: List[str],
+) -> None:
+    """Append a faceoff event snapshot to the log file."""
+    timestamp = _now_est()
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write(f"[{timestamp}] FACEOFF EVENT\n")
+        f.write(f"Game: {away_name} @ {home_name} | {game_state}\n")
+        f.write(f"Description: {event_description}\n")
+        f.write("Monitor snapshot:\n")
+        for line in monitor_lines:
+            f.write(f"{line}\n")
+        f.write("\n" + "=" * 80 + "\n\n")
+
+
 # ─────────────────────────────────────────────────────────────────────
 # Game selection
 # ─────────────────────────────────────────────────────────────────────
@@ -147,9 +168,10 @@ def _load_elo_players(player_ids: List[int]) -> List[Dict]:
     return loaded
 
 
-def display_matchup(home_raw: list, away_raw: list,
-                    home_name: str, away_name: str) -> None:
-    """Print player names and Elo matchup analysis for the two teams."""
+def _build_matchup_lines(home_raw: list, away_raw: list,
+                         home_name: str, away_name: str) -> List[str]:
+    """Build monitor lines for player lists and Elo matchup analysis."""
+    lines: List[str] = []
 
     # -- extract NHL ids -------------------------------------------------
     home_ids = [_extract_player_id(p) for p in home_raw]
@@ -158,35 +180,35 @@ def display_matchup(home_raw: list, away_raw: list,
     away_ids = [i for i in away_ids if i is not None]
 
     # -- print raw player lists -----------------------------------------
-    print(f"\n{'─'*60}")
-    print(f"  🏠  {home_name} – on ice")
-    print(f"{'─'*60}")
+    lines.append(f"\n{'─'*60}")
+    lines.append(f"  🏠  {home_name} – on ice")
+    lines.append(f"{'─'*60}")
     for p in home_raw:
         name = _player_display_name(p)
         pid = _extract_player_id(p)
         tag = f"  (#{pid})" if pid else ""
-        print(f"    • {name}{tag}")
+        lines.append(f"    • {name}{tag}")
 
-    print(f"\n{'─'*60}")
-    print(f"  🚌  {away_name} – on ice")
-    print(f"{'─'*60}")
+    lines.append(f"\n{'─'*60}")
+    lines.append(f"  🚌  {away_name} – on ice")
+    lines.append(f"{'─'*60}")
     for p in away_raw:
         name = _player_display_name(p)
         pid = _extract_player_id(p)
         tag = f"  (#{pid})" if pid else ""
-        print(f"    • {name}{tag}")
+        lines.append(f"    • {name}{tag}")
 
     # -- load Elo data ---------------------------------------------------
     home_elo_players = _load_elo_players(home_ids)
     away_elo_players = _load_elo_players(away_ids)
 
     if not home_elo_players or not away_elo_players:
-        print("\n  ⚠  Not enough Elo data for a matchup analysis.")
+        lines.append("\n  ⚠  Not enough Elo data for a matchup analysis.")
         if not home_elo_players:
-            print(f"     No Elo records found for {home_name} players on ice.")
+            lines.append(f"     No Elo records found for {home_name} players on ice.")
         if not away_elo_players:
-            print(f"     No Elo records found for {away_name} players on ice.")
-        return
+            lines.append(f"     No Elo records found for {away_name} players on ice.")
+        return lines
 
     # -- weights (suppress inner prints by temporarily redirecting) ------
     # We recalculate quietly, then print our own summary.
@@ -200,43 +222,62 @@ def display_matchup(home_raw: list, away_raw: list,
         sys.stdout = _orig_stdout
 
     # -- matchup table ---------------------------------------------------
-    print(f"\n{'='*60}")
-    print(f"{'FACEOFF ELO MATCHUP':^60}")
-    print(f"{'='*60}")
+    lines.append(f"\n{'='*60}")
+    lines.append(f"{'FACEOFF ELO MATCHUP':^60}")
+    lines.append(f"{'='*60}")
 
-    print(f"\n  {home_name} (Home)")
+    lines.append(f"\n  {home_name} (Home)")
     for p, w in zip(home_elo_players, home_weights):
         fpm = faceoffs_per_minute(p)
-        print(f"    {p['player_name']:<24} Elo {p['elo']:7.1f}  "
-              f"FPM {fpm:5.2f}  Wt {w:5.1%}")
+        lines.append(
+            f"    {p['player_name']:<24} Elo {p['elo']:7.1f}  "
+            f"FPM {fpm:5.2f}  Wt {w:5.1%}"
+        )
 
-    print(f"\n  {away_name} (Away)")
+    lines.append(f"\n  {away_name} (Away)")
     for p, w in zip(away_elo_players, away_weights):
         fpm = faceoffs_per_minute(p)
-        print(f"    {p['player_name']:<24} Elo {p['elo']:7.1f}  "
-              f"FPM {fpm:5.2f}  Wt {w:5.1%}")
+        lines.append(
+            f"    {p['player_name']:<24} Elo {p['elo']:7.1f}  "
+            f"FPM {fpm:5.2f}  Wt {w:5.1%}"
+        )
 
     # -- overall probability ---------------------------------------------
     overall_home = 0.0
-    print(f"\n{'─'*60}")
-    print(f"  {'Home Player':>22}  vs  {'Away Player':<22}  P(Home)   Odds")
-    print(f"{'─'*60}")
+    lines.append(f"\n{'─'*60}")
+    lines.append(f"  {'Home Player':>22}  vs  {'Away Player':<22}  P(Home)   Odds")
+    lines.append(f"{'─'*60}")
     for i, hp in enumerate(home_elo_players):
         for j, ap in enumerate(away_elo_players):
             p_win = win_probability(hp["elo"], ap["elo"])
             mw = home_weights[i] * away_weights[j]
             overall_home += p_win * mw
             p_odds = _probability_to_american_odds(p_win)
-            print(f"  {hp['player_name']:>22}  vs  {ap['player_name']:<22}  "
-                  f"{p_win:6.2%}  {p_odds:>5}  (wt {mw:5.2%})")
+            lines.append(
+                f"  {hp['player_name']:>22}  vs  {ap['player_name']:<22}  "
+                f"{p_win:6.2%}  {p_odds:>5}  (wt {mw:5.2%})"
+            )
 
     home_odds = _probability_to_american_odds(overall_home)
     away_odds = _probability_to_american_odds(1 - overall_home)
-    print(f"\n{'='*60}")
-    print(f"  OVERALL  {home_name}: {overall_home:.2%}   "
-          f"{away_name}: {1 - overall_home:.2%}")
-    print(f"           Odds  {home_name}: {home_odds}   {away_name}: {away_odds}")
-    print(f"{'='*60}")
+    lines.append(f"\n{'='*60}")
+    lines.append(
+        f"  OVERALL  {home_name}: {overall_home:.2%}   "
+        f"{away_name}: {1 - overall_home:.2%}"
+    )
+    lines.append(f"           Odds  {home_name}: {home_odds}   {away_name}: {away_odds}")
+    lines.append(f"{'='*60}")
+
+    return lines
+
+
+def display_matchup(home_raw: list, away_raw: list,
+                    home_name: str, away_name: str) -> List[str]:
+    """Print and return monitor lines for player names and Elo matchup analysis."""
+    lines = _build_matchup_lines(home_raw, away_raw, home_name, away_name)
+    for line in lines:
+        print(line)
+    return lines
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -256,6 +297,7 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
 
     prev_home_ids: set = set()
     prev_away_ids: set = set()
+    logged_faceoff_keys: set = set()
 
     while True:
         try:
@@ -272,6 +314,9 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
         game_period = on_ice.get("period")
         game_status = on_ice.get("status")
         game_state = _format_game_state(game_period, game_clock, game_status)
+        event_type = (on_ice.get("event_type") or "").lower()
+        event_description = on_ice.get("event_description") or "(no description)"
+        event_id = on_ice.get("event_id")
 
         if _is_game_complete(game_clock, game_status):
             os.system("clear" if os.name != "nt" else "cls")
@@ -287,7 +332,7 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
             # Clear terminal for a fresh view
             os.system("clear" if os.name != "nt" else "cls")
             print(f"🏒  {away_name} @ {home_name}  |  {game_state}  |  Last updated: {_now_est()}")
-            display_matchup(home_players, away_players, home_name, away_name)
+            monitor_lines = display_matchup(home_players, away_players, home_name, away_name)
             prev_home_ids = cur_home_ids
             prev_away_ids = cur_away_ids
         else:
@@ -297,6 +342,20 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
                 end="",
                 flush=True,
             )
+            monitor_lines = _build_matchup_lines(home_players, away_players, home_name, away_name)
+
+        if event_type == "faceoff":
+            faceoff_key = f"{event_id}|{event_description}|{game_period}|{game_clock}"
+            if faceoff_key not in logged_faceoff_keys:
+                _append_faceoff_log(
+                    FACEOFF_LOG_PATH,
+                    event_description,
+                    game_state,
+                    away_name,
+                    home_name,
+                    monitor_lines,
+                )
+                logged_faceoff_keys.add(faceoff_key)
 
         time.sleep(interval)
 

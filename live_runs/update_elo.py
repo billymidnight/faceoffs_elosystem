@@ -266,8 +266,6 @@ def main() -> int:
 		raise SystemExit(f"No valid player Elo files found in {player_elo_dir}")
 
 	print(f"Loaded {len(players)} existing players from {player_elo_dir}")
-	print(f"Processing {len(game_files)} game file(s) with K={args.k}")
-
 	processed, unknown_zone_count = apply_faceoff_updates(
 		players=players,
 		game_files=game_files,
