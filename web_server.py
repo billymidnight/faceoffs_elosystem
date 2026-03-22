@@ -53,35 +53,6 @@ def _probability_to_american_odds(prob: float) -> str:
     rounded = int(round(odds))
     return f"+{rounded}" if rounded > 0 else str(rounded)
 
-def calculate_odds(home_players, away_players, home_name, away_name):
-    home_ids = [_extract_player_id(p) for p in home_players]
-    away_ids = [_extract_player_id(p) for p in away_players]
-    home_ids = [i for i in home_ids if i is not None]
-    away_ids = [i for i in away_ids if i is not None]
-    
-    home_elo_players = [load_player(pid, player_elos_dir=PLAYER_ELOS_DIR) for pid in home_ids]
-    away_elo_players = [load_player(pid, player_elos_dir=PLAYER_ELOS_DIR) for pid in away_ids]
-    
-    home_elo_players = [p for p in home_elo_players if p is not None]
-    away_elo_players = [p for p in away_elo_players if p is not None]
-    
-    if not home_elo_players or not away_elo_players:
-        return 0, 0, "N/A", "N/A"
-
-    home_weights = _quiet_weights(home_elo_players, label=home_name)
-    away_weights = _quiet_weights(away_elo_players, label=away_name)
-    
-    overall_home = 0.0
-    for i, hp in enumerate(home_elo_players):
-        for j, ap in enumerate(away_elo_players):
-            p_win = win_probability(hp["elo"], ap["elo"])
-            mw = home_weights[i] * away_weights[j]
-            overall_home += p_win * mw
-            
-    home_prob = overall_home
-    away_prob = 1 - overall_home
-    return home_prob, away_prob, _probability_to_american_odds(home_prob), _probability_to_american_odds(away_prob)
-
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html>
@@ -125,7 +96,7 @@ HTML_TEMPLATE = """
                     <select name="game_id" required>
                         <option value="" disabled selected>Select a Game</option>
                         {% for g in games %}
-                            <option value="{{ g.sr_game_id }}|{{ g.home_team.name }}|{{ g.away_team.name }}">
+                            <option value="{{ g.game_id }}|{{ g.home_team.name }}|{{ g.away_team.name }}">
                                 {{ g.away_team.name }} @ {{ g.home_team.name }}
                             </option>
                         {% endfor %}
@@ -147,21 +118,61 @@ HTML_TEMPLATE = """
             <h3>🏠 {{ state.home_name }} On Ice</h3>
             <p class="odds">Win Prob: {{ "%.1f"|format(state.home_prob * 100) }}% | Odds: {{ state.home_odds }}</p>
             <ul>
-                {% for p in state.home_players %}
-                    <li>{{ p.full_name | default(p.name | default('Unknown')) }}</li>
-                {% endfor %}
+                {% if state.home_players_elo %}
+                    {% for p in state.home_players_elo %}
+                        <li>{{ p.name }} - Elo: {{ "%.1f"|format(p.elo) }} (Wt: {{ "%.1f"|format(p.weight * 100) }}%)</li>
+                    {% endfor %}
+                {% else %}
+                    {% for p in state.home_players %}
+                        <li>{{ p.full_name | default(p.name | default('Unknown')) }}</li>
+                    {% endfor %}
+                {% endif %}
             </ul>
         </div>
         <div style="flex: 1;">
             <h3>🚌 {{ state.away_name }} On Ice</h3>
             <p class="odds">Win Prob: {{ "%.1f"|format(state.away_prob * 100) }}% | Odds: {{ state.away_odds }}</p>
             <ul>
-                {% for p in state.away_players %}
-                    <li>{{ p.full_name | default(p.name | default('Unknown')) }}</li>
-                {% endfor %}
+                {% if state.away_players_elo %}
+                    {% for p in state.away_players_elo %}
+                        <li>{{ p.name }} - Elo: {{ "%.1f"|format(p.elo) }} (Wt: {{ "%.1f"|format(p.weight * 100) }}%)</li>
+                    {% endfor %}
+                {% else %}
+                    {% for p in state.away_players %}
+                        <li>{{ p.full_name | default(p.name | default('Unknown')) }}</li>
+                    {% endfor %}
+                {% endif %}
             </ul>
         </div>
     </div>
+
+    {% if state.matchups %}
+    <div style="margin-top: 20px;">
+        <h3>Detailed Matchups</h3>
+        <table style="font-size: 14px;">
+            <tr>
+                <th>Home Player</th>
+                <th>Away Player</th>
+                <th>P(Home)</th>
+                <th>Home Odds</th>
+                <th>P(Away)</th>
+                <th>Away Odds</th>
+                <th>Matchup Weight</th>
+            </tr>
+            {% for m in state.matchups %}
+            <tr>
+                <td>{{ m.home_player }}</td>
+                <td>{{ m.away_player }}</td>
+                <td>{{ "%.1f"|format(m.prob_home * 100) }}%</td>
+                <td>{{ m.odds_home }}</td>
+                <td>{{ "%.1f"|format(m.prob_away * 100) }}%</td>
+                <td>{{ m.odds_away }}</td>
+                <td>{{ "%.2f"|format(m.weight * 100) }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    {% endif %}
 
     <form action="/place_bet" method="post" style="margin-top: 20px;">
         <input type="hidden" name="expected_faceoff" value="{{ state.next_faceoff }}">
@@ -280,17 +291,6 @@ def update_state():
     global current_state
     data = request.json
     current_state.update(data)
-    
-    home_prob, away_prob, home_odds, away_odds = calculate_odds(
-        data.get("home_players", []),
-        data.get("away_players", []),
-        data.get("home_name", "Home"),
-        data.get("away_name", "Away")
-    )
-    current_state["home_prob"] = home_prob
-    current_state["away_prob"] = away_prob
-    current_state["home_odds"] = home_odds
-    current_state["away_odds"] = away_odds
     
     return jsonify({"status": "ok"})
 

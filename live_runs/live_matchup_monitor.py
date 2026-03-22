@@ -170,9 +170,9 @@ def _load_elo_players(player_ids: List[int]) -> List[Dict]:
     return loaded
 
 
-def _build_matchup_lines(home_raw: list, away_raw: list,
-                         home_name: str, away_name: str) -> List[str]:
-    """Build monitor lines for player lists and Elo matchup analysis."""
+def _build_matchup_data(home_raw: list, away_raw: list,
+                         home_name: str, away_name: str) -> tuple[List[str], dict]:
+    """Build monitor lines for player lists and Elo matchup analysis, returning lines and data dictionary."""
     lines: List[str] = []
 
     # -- extract NHL ids -------------------------------------------------
@@ -210,7 +210,7 @@ def _build_matchup_lines(home_raw: list, away_raw: list,
             lines.append(f"     No Elo records found for {home_name} players on ice.")
         if not away_elo_players:
             lines.append(f"     No Elo records found for {away_name} players on ice.")
-        return lines
+        return lines, {}
 
     # -- weights (suppress inner prints by temporarily redirecting) ------
     # We recalculate quietly, then print our own summary.
@@ -246,6 +246,7 @@ def _build_matchup_lines(home_raw: list, away_raw: list,
 
     # -- overall probability ---------------------------------------------
     overall_home = 0.0
+    matchups = []
     lines.append(f"\n{'─'*60}")
     lines.append(f"  {'Home Player':>22}  vs  {'Away Player':<22}  P(Home)   Odds")
     lines.append(f"{'─'*60}")
@@ -255,6 +256,17 @@ def _build_matchup_lines(home_raw: list, away_raw: list,
             mw = home_weights[i] * away_weights[j]
             overall_home += p_win * mw
             p_odds = _probability_to_american_odds(p_win)
+            
+            matchups.append({
+                "home_player": hp['player_name'],
+                "away_player": ap['player_name'],
+                "prob_home": p_win,
+                "prob_away": 1.0 - p_win,
+                "weight": mw,
+                "odds_home": p_odds,
+                "odds_away": _probability_to_american_odds(1.0 - p_win)
+            })
+            
             lines.append(
                 f"  {hp['player_name']:>22}  vs  {ap['player_name']:<22}  "
                 f"{p_win:6.2%}  {p_odds:>5}  (wt {mw:5.2%})"
@@ -270,16 +282,26 @@ def _build_matchup_lines(home_raw: list, away_raw: list,
     lines.append(f"           Odds  {home_name}: {home_odds}   {away_name}: {away_odds}")
     lines.append(f"{'='*60}")
 
-    return lines
+    data = {
+        "home_prob": overall_home,
+        "away_prob": 1 - overall_home,
+        "home_odds": home_odds,
+        "away_odds": away_odds,
+        "matchups": matchups,
+        "home_players_elo": [{"name": p["player_name"], "elo": p["elo"], "weight": mw} for p, mw in zip(home_elo_players, home_weights)],
+        "away_players_elo": [{"name": p["player_name"], "elo": p["elo"], "weight": mw} for p, mw in zip(away_elo_players, away_weights)]
+    }
+
+    return lines, data
 
 
 def display_matchup(home_raw: list, away_raw: list,
-                    home_name: str, away_name: str) -> List[str]:
+                    home_name: str, away_name: str) -> tuple[List[str], dict]:
     """Print and return monitor lines for player names and Elo matchup analysis."""
-    lines = _build_matchup_lines(home_raw, away_raw, home_name, away_name)
+    lines, data = _build_matchup_data(home_raw, away_raw, home_name, away_name)
     for line in lines:
         print(line)
-    return lines
+    return lines, data
 
 
 # ─────────────────────────────────────────────────────────────────────
@@ -341,7 +363,7 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
             # Clear terminal for a fresh view
             os.system("clear" if os.name != "nt" else "cls")
             print(f"🏒  {away_name} @ {home_name}  |  {game_state}  |  Last updated: {_now_est()}")
-            monitor_lines = display_matchup(home_players, away_players, home_name, away_name)
+            monitor_lines, matchup_data = display_matchup(home_players, away_players, home_name, away_name)
             prev_home_ids = cur_home_ids
             prev_away_ids = cur_away_ids
         else:
@@ -351,7 +373,7 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
                 end="",
                 flush=True,
             )
-            monitor_lines = _build_matchup_lines(home_players, away_players, home_name, away_name)
+            monitor_lines, matchup_data = _build_matchup_data(home_players, away_players, home_name, away_name)
 
         if event_type == "faceoff":
             # Only count as new if the event ID is unique
@@ -395,7 +417,8 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
                 "away_name": away_name,
                 "home_players": home_players,
                 "away_players": away_players,
-                "next_faceoff": period_faceoff_count + 1
+                "next_faceoff": period_faceoff_count + 1,
+                **matchup_data
             }
             requests.post("http://localhost:3000/state", json=state_payload, timeout=2)
         except Exception:
