@@ -108,11 +108,13 @@ def _append_faceoff_log(
     away_name: str,
     home_name: str,
     monitor_lines: List[str],
+    faceoff_number: Optional[int] = None,
 ) -> None:
     """Append a faceoff event snapshot to the log file."""
     timestamp = _now_est()
+    faceoff_str = f" #{faceoff_number}" if faceoff_number else ""
     with open(log_path, "a", encoding="utf-8") as f:
-        f.write(f"[{timestamp}] FACEOFF EVENT\n")
+        f.write(f"[{timestamp}] FACEOFF EVENT{faceoff_str}\n")
         f.write(f"Game: {away_name} @ {home_name} | {game_state}\n")
         f.write(f"Description: {event_description}\n")
         f.write("Monitor snapshot:\n")
@@ -298,6 +300,8 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
     prev_home_ids: set = set()
     prev_away_ids: set = set()
     logged_faceoff_keys: set = set()
+    current_period = None
+    period_faceoff_count = 0
 
     while True:
         try:
@@ -312,6 +316,11 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
         away_players = on_ice.get("away", [])
         game_clock = on_ice.get("clock")
         game_period = on_ice.get("period")
+
+        if game_period != current_period:
+            current_period = game_period
+            period_faceoff_count = 0
+
         game_status = on_ice.get("status")
         game_state = _format_game_state(game_period, game_clock, game_status)
         event_type = (on_ice.get("event_type") or "").lower()
@@ -345,8 +354,11 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
             monitor_lines = _build_matchup_lines(home_players, away_players, home_name, away_name)
 
         if event_type == "faceoff":
-            faceoff_key = f"{event_id}|{event_description}|{game_period}|{game_clock}"
+            # Only count as new if the event ID is unique
+            faceoff_key = str(event_id)
             if faceoff_key not in logged_faceoff_keys:
+                period_faceoff_count += 1
+                
                 _append_faceoff_log(
                     FACEOFF_LOG_PATH,
                     event_description,
@@ -354,8 +366,40 @@ def monitor_loop(game: dict, api_key: str, interval: int = 5) -> None:
                     away_name,
                     home_name,
                     monitor_lines,
+                    faceoff_number=period_faceoff_count,
                 )
+                
+                # Send the event to the local endpoint
+                try:
+                    import requests
+                    payload = {
+                        "event_id": event_id,
+                        "description": event_description,
+                        "on_ice": on_ice,
+                        "faceoff_number": period_faceoff_count,
+                        "game_period": game_period
+                    }
+                    requests.post("http://localhost:3000/faceoff", json=payload, timeout=3)
+                except Exception as req_err:
+                    print(f"  [Error sending faceoff to localhost:3000 -> {req_err}]")
+                    
                 logged_faceoff_keys.add(faceoff_key)
+
+        # -- send state to web server --
+        try:
+            import requests
+            state_payload = {
+                "game_period": game_period,
+                "game_clock": game_clock,
+                "home_name": home_name,
+                "away_name": away_name,
+                "home_players": home_players,
+                "away_players": away_players,
+                "next_faceoff": period_faceoff_count + 1
+            }
+            requests.post("http://localhost:3000/state", json=state_payload, timeout=2)
+        except Exception:
+            pass
 
         time.sleep(interval)
 
@@ -381,9 +425,29 @@ def main() -> None:
         default=5,
         help="Polling interval in seconds (default: 5)",
     )
+    parser.add_argument(
+        "--sr-game-id",
+        help="Skip selection and use this game ID",
+    )
+    parser.add_argument(
+        "--home-name",
+        help="Home team name for non-interactive",
+    )
+    parser.add_argument(
+        "--away-name",
+        help="Away team name for non-interactive",
+    )
     args = parser.parse_args()
 
-    game = select_game(args.sportsradar_key)
+    if args.sr_game_id:
+        game = {
+            "sr_game_id": args.sr_game_id,
+            "home_team": {"name": args.home_name or "Home"},
+            "away_team": {"name": args.away_name or "Away"},
+            "start_time_common": "Live Server"
+        }
+    else:
+        game = select_game(args.sportsradar_key)
 
     try:
         monitor_loop(game, args.sportsradar_key, interval=args.interval)
