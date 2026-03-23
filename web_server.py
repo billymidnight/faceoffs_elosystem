@@ -31,6 +31,7 @@ current_state = {
 }
 
 bets = []
+last_faceoff = {}
 monitor_proc = None
 
 # We can suppress stdout from weights calculation
@@ -70,12 +71,53 @@ HTML_TEMPLATE = """
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
         .bet-resolved { background: #e8f5e9; }
-        .bet-resolved.success { background: #e8f5e9; }
+        .bet-won { background: #c8e6c9 !important; }
+        .bet-lost { background: #ffcdd2 !important; }
         .bet-unresolved { background: #fff8e1; }
+        .last-faceoff-panel { background: #f3e5f5; border: 2px solid #ce93d8; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+        .last-faceoff-panel h3 { margin-top: 0; color: #6a1b9a; }
+        .modal-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; }
+        .modal-overlay.active { display:flex; }
+        .modal-box { background:white; padding:30px; border-radius:10px; box-shadow:0 4px 20px rgba(0,0,0,0.3); text-align:center; min-width:340px; }
+        .modal-box h3 { margin-top:0; }
+        .modal-box input { padding:12px; font-size:20px; width:160px; text-align:center; border:2px solid #1a73e8; border-radius:6px; margin:10px 0; }
+        .modal-box .modal-btns { display:flex; gap:10px; justify-content:center; margin-top:15px; }
+        .modal-box .modal-btns button { padding:10px 20px; font-size:15px; border:none; border-radius:4px; cursor:pointer; }
+        .modal-box .btn-confirm { background:#1a73e8; color:white; }
+        .modal-box .btn-confirm:hover { background:#135aba; }
+        .modal-box .btn-skip { background:#757575; color:white; }
+        .modal-box .btn-skip:hover { background:#616161; }
     </style>
     <script>
-        // Auto refresh state every 2 seconds
-        setInterval(() => window.location.reload(), 2000);
+        var refreshTimer = setInterval(() => window.location.reload(), 2000);
+        function pauseRefresh() { clearInterval(refreshTimer); }
+        function resumeRefresh() { refreshTimer = setInterval(() => window.location.reload(), 2000); }
+
+        function openBetModal(team, faceoff, period) {
+            pauseRefresh();
+            document.getElementById('modal_team_label').textContent = team;
+            document.getElementById('modal_team_pick').value = team;
+            document.getElementById('modal_expected_faceoff').value = faceoff;
+            document.getElementById('modal_game_period').value = period;
+            document.getElementById('modal_taken_odds').value = '';
+            document.getElementById('modal_taken_odds').focus();
+            document.getElementById('bet_modal').classList.add('active');
+            setTimeout(function(){ document.getElementById('modal_taken_odds').focus(); }, 100);
+        }
+
+        function confirmBet() {
+            document.getElementById('modal_bet_form').submit();
+        }
+
+        function skipOdds() {
+            document.getElementById('modal_taken_odds').value = '';
+            document.getElementById('modal_bet_form').submit();
+        }
+
+        function cancelBet() {
+            document.getElementById('bet_modal').classList.remove('active');
+            resumeRefresh();
+        }
     </script>
 </head>
 <body>
@@ -107,6 +149,20 @@ HTML_TEMPLATE = """
         {% endif %}
     </div>
 </div>
+
+{% if last_faceoff %}
+<div class="card last-faceoff-panel">
+    <h3>Last Faceoff</h3>
+    <div style="display:flex; gap:30px; flex-wrap:wrap; align-items:center;">
+        <div><strong>Winning Team:</strong> {{ last_faceoff.winning_team }}</div>
+        <div><strong>Winner:</strong> {{ last_faceoff.winner_player }}</div>
+        <div><strong>Loser:</strong> {{ last_faceoff.loser_player }}</div>
+        <div><strong>Period:</strong> P{{ last_faceoff.period }} | <strong>Clock:</strong> {{ last_faceoff.clock }}</div>
+        <div><strong>FO #:</strong> {{ last_faceoff.faceoff_number }}</div>
+    </div>
+    <div style="margin-top:8px; font-size:13px; color:#555;"><em>{{ last_faceoff.description }}</em></div>
+</div>
+{% endif %}
 
 <div class="card">
     <h2>Current State: {{ state.away_name }} @ {{ state.home_name }}</h2>
@@ -174,15 +230,35 @@ HTML_TEMPLATE = """
     </div>
     {% endif %}
 
-    <form action="/place_bet" method="post" style="margin-top: 20px;">
-        <input type="hidden" name="expected_faceoff" value="{{ state.next_faceoff }}">
-        <input type="hidden" name="game_period" value="{{ state.game_period }}">
-        <select name="team_pick" required style="padding: 10px; font-size:16px;">
-            <option value="{{ state.home_name }}">{{ state.home_name }} ({{ state.home_odds }})</option>
-            <option value="{{ state.away_name }}">{{ state.away_name }} ({{ state.away_odds }})</option>
-        </select>
-        <button type="submit" class="btn">Lock in Bet!</button>
-    </form>
+    <div style="margin-top: 20px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
+        <button type="button" class="btn" style="font-size:15px; padding:10px 18px;"
+            onclick="openBetModal('{{ state.home_name }}', '{{ state.next_faceoff }}', '{{ state.game_period }}')">
+            Take {{ state.home_name }} ({{ state.home_odds }})
+        </button>
+        <button type="button" class="btn" style="font-size:15px; padding:10px 18px;"
+            onclick="openBetModal('{{ state.away_name }}', '{{ state.next_faceoff }}', '{{ state.game_period }}')">
+            Take {{ state.away_name }} ({{ state.away_odds }})
+        </button>
+    </div>
+</div>
+
+<!-- Bet Modal -->
+<div id="bet_modal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>Place Bet: <span id="modal_team_label"></span></h3>
+        <form id="modal_bet_form" action="/place_bet" method="post">
+            <input type="hidden" name="team_pick" id="modal_team_pick">
+            <input type="hidden" name="expected_faceoff" id="modal_expected_faceoff">
+            <input type="hidden" name="game_period" id="modal_game_period">
+            <label style="font-weight:bold;">Taken Odds (American):</label><br>
+            <input type="text" name="taken_odds" id="modal_taken_odds" placeholder="e.g. -110" autofocus>
+            <div class="modal-btns">
+                <button type="button" class="btn-confirm" onclick="confirmBet()">Confirm</button>
+                <button type="button" class="btn-skip" onclick="skipOdds()">Skip (no odds)</button>
+                <button type="button" class="btn-skip" onclick="cancelBet()" style="background:#e53935;">Cancel</button>
+            </div>
+        </form>
+    </div>
 </div>
 
 <div class="card">
@@ -192,7 +268,9 @@ HTML_TEMPLATE = """
             <th>ID</th>
             <th>Expected FO</th>
             <th>Pick</th>
-            <th>Locked Odds</th>
+            <th>Fair Odds</th>
+            <th>Taken Odds</th>
+            <th>CLV</th>
             <th>Locked On-Ice</th>
             <th>Status</th>
             <th>Actual Faceoff Description</th>
@@ -200,11 +278,13 @@ HTML_TEMPLATE = """
             <th>Winner</th>
         </tr>
         {% for bet in bets | reverse %}
-        <tr class="{{ 'bet-resolved' if bet.resolved else 'bet-unresolved' }}">
+        <tr class="{% if bet.resolved %}{% if bet.pick_won %}bet-won{% elif bet.pick_won == False %}bet-lost{% else %}bet-resolved{% endif %}{% else %}bet-unresolved{% endif %}">
             <td>{{ loop.index }}</td>
             <td>P{{ bet.game_period }} #{{ bet.expected_faceoff }}</td>
             <td>{{ bet.team_pick }}</td>
             <td>{{ bet.locked_odds }}</td>
+            <td>{{ bet.taken_odds if bet.taken_odds else "-" }}</td>
+            <td>{{ bet.clv if bet.clv else "Pending" }}</td>
             <td><small><b>H:</b> {{ bet.snapshot_home_players | join(", ") }}<br><b>A:</b> {{ bet.snapshot_away_players | join(", ") }}</small></td>
             <td>{{ "Resolved" if bet.resolved else "Pending..." }}</td>
             <td>{{ bet.actual_event.description if bet.resolved else "-" }}</td>
@@ -248,7 +328,7 @@ def index():
             except Exception as e:
                 print("Error loading games:", e)
     
-    return render_template_string(HTML_TEMPLATE, state=current_state, bets=bets, is_running=(monitor_proc is not None), games=games)
+    return render_template_string(HTML_TEMPLATE, state=current_state, bets=bets, last_faceoff=last_faceoff, is_running=(monitor_proc is not None), games=games)
 
 @app.route("/start_monitor", methods=["POST"])
 def start_monitor():
@@ -296,11 +376,44 @@ def update_state():
 
 @app.route("/faceoff", methods=["POST"])
 def log_faceoff():
+    global last_faceoff
     data = request.json
     faceoff_num = data.get("faceoff_number")
     game_period = data.get("game_period")
     description = data.get("description", "").lower()
     on_ice = data.get("on_ice", {})
+    
+    # Parse winner/loser from description
+    winner_str = description.split(" won faceoff")[0].strip() if " won faceoff" in description else ""
+    loser_str = ""
+    if " against " in description:
+        loser_str = description.split(" against ")[-1].strip().rstrip(".")
+    
+    # Determine winning team
+    winning_team = ""
+    if winner_str:
+        for p in on_ice.get("home", []):
+            pname = (p.get("full_name") or p.get("name") or "").lower()
+            if winner_str in pname:
+                winning_team = current_state.get("home_name", "Home")
+                break
+        if not winning_team:
+            for p in on_ice.get("away", []):
+                pname = (p.get("full_name") or p.get("name") or "").lower()
+                if winner_str in pname:
+                    winning_team = current_state.get("away_name", "Away")
+                    break
+    
+    # Update last faceoff panel
+    last_faceoff = {
+        "winner_player": winner_str.title(),
+        "loser_player": loser_str.title(),
+        "winning_team": winning_team or "Unknown",
+        "period": game_period,
+        "clock": on_ice.get("clock", ""),
+        "faceoff_number": faceoff_num,
+        "description": data.get("description", "")
+    }
     
     # Check if there are any active bets waiting for this faceoff
     for bet in bets:
@@ -308,15 +421,14 @@ def log_faceoff():
             bet["resolved"] = True
             bet["actual_event"] = data
             
-            # Simple check to see if the chosen team won the faceoff based on the description
+            # Capture CLV: fair price of the side we took right before this faceoff
+            if bet["team_pick"] == current_state.get("home_name"):
+                bet["clv"] = current_state.get("home_odds", "N/A")
+            else:
+                bet["clv"] = current_state.get("away_odds", "N/A")
+            
+            # Check if the chosen team won the faceoff
             team_pick = bet["team_pick"].lower()
-            
-            # Find which player won
-            # Expected "Player Name won faceoff"
-            winner_str = description.split(" won faceoff")[0].strip() if " won faceoff" in description else ""
-            
-            # See if winner_str is in the chosen team's snapshot or actual on-ice roster
-            # We match vs team_pick. We have actual_event.on_ice."home" and "away"
             is_home_pick = (team_pick == current_state["home_name"].lower())
             
             check_list = on_ice.get("home", []) if is_home_pick else on_ice.get("away", [])
@@ -327,7 +439,6 @@ def log_faceoff():
                     pick_won = True
                     break
             
-            # If not in our picked team, they might be in the opposing team
             if pick_won is None and winner_str:
                 opp_list = on_ice.get("away", []) if is_home_pick else on_ice.get("home", [])
                 for p in opp_list:
@@ -345,6 +456,7 @@ def place_bet():
     team_pick = request.form.get("team_pick")
     expected_faceoff = int(request.form.get("expected_faceoff", 1))
     game_period = int(request.form.get("game_period", 1))
+    taken_odds = request.form.get("taken_odds", "")
     
     locked_odds = current_state["home_odds"] if team_pick == current_state["home_name"] else current_state["away_odds"]
     
@@ -357,6 +469,8 @@ def place_bet():
         "expected_faceoff": expected_faceoff,
         "game_period": game_period,
         "locked_odds": locked_odds,
+        "taken_odds": taken_odds,
+        "clv": "Pending",
         "snapshot_home_players": snapshot_home_players,
         "snapshot_away_players": snapshot_away_players,
         "resolved": False,
